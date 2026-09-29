@@ -40,6 +40,31 @@
   });
 
   /* ------------------------------------------------------------------------
+     Tema claro/oscuro. Claro por defecto; la elección se recuerda en este
+     navegador (el <head> la aplica antes de pintar).
+     ------------------------------------------------------------------------ */
+  var root = document.documentElement;
+  var themeBtn = document.querySelector('.theme-toggle');
+
+  function syncThemeButton() {
+    var dark = root.getAttribute('data-theme') === 'dark';
+    themeBtn.setAttribute('aria-pressed', String(dark));
+    themeBtn.setAttribute('aria-label', dark ? 'Activar modo claro' : 'Activar modo oscuro');
+  }
+
+  themeBtn.addEventListener('click', function () {
+    var dark = root.getAttribute('data-theme') !== 'dark';
+    if (dark) {
+      root.setAttribute('data-theme', 'dark');
+    } else {
+      root.removeAttribute('data-theme');
+    }
+    try { localStorage.setItem('mesquite-theme', dark ? 'dark' : 'light'); } catch (e) {}
+    syncThemeButton();
+  });
+  syncThemeButton();
+
+  /* ------------------------------------------------------------------------
      2. Hero: reloj en vivo del mockup
      ------------------------------------------------------------------------ */
   var clock = document.querySelector('[data-clock]');

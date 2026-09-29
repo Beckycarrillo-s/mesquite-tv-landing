@@ -45,35 +45,8 @@
 
 /* --------------------------------------------------------------------------
    Tokens de color · modo oscuro
-   (sistema, salvo que se fuerce data-theme="light"; o forzado con data-theme="dark")
+   Claro por defecto. Se activa con el botón de tema (data-theme="dark" en <html>).
    -------------------------------------------------------------------------- */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0B140E;
-    --surface: #12211A;
-    --surface-alt: #152A1D;
-    --border: #26392E;
-    --text: #EAF3EC;
-    --text-muted: #9FB6A6;
-    --accent: #4FBF82;
-    --accent-mid: #6ECB94;
-    --accent-dark: #A8D9BB;
-    --accent-tint: #1C3327;
-    --sage: #9FC2AE;
-    --sage-tint: #223328;
-    --complement: #E8C08A;
-    --complement-dark: #F0D9AE;
-    --complement-tint: #33291A;
-
-    --on-accent: #0B140E;
-    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .3);
-    --shadow-lg: 0 24px 60px rgba(0, 0, 0, .5);
-    --nav-bg: rgba(11, 20, 14, .85);
-    --danger: #F08A7A;
-    color-scheme: dark;
-  }
-}
-
 :root[data-theme="dark"] {
   --bg: #0B140E;
   --surface: #12211A;
@@ -252,6 +225,36 @@ img { max-width: 100%; display: block; }
   justify-content: space-between;
 }
 
+/* Botón de tema claro/oscuro (siempre visible) */
+.theme-toggle {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-left: auto;
+  margin-right: 4px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+.theme-toggle:hover { border-color: var(--accent); color: var(--accent-mid); }
+.theme-toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.theme-toggle__sun { display: none; }
+:root[data-theme="dark"] .theme-toggle__sun { display: block; }
+:root[data-theme="dark"] .theme-toggle__moon { display: none; }
+
 /* Botón hamburguesa (solo móvil) */
 .nav__toggle {
   display: inline-flex;
@@ -314,6 +317,8 @@ img { max-width: 100%; display: block; }
     border: 0;
     box-shadow: none;
   }
+  .nav__menu { margin-left: auto; }
+  .theme-toggle { order: 2; margin-left: 20px; margin-right: 0; }
   .nav__menu a:not(.btn) { padding: 0; font-size: 15px; }
   .nav__menu .btn { margin-top: 0; }
 }
@@ -722,11 +727,17 @@ img { max-width: 100%; display: block; }
 /* Placeholder: se reemplaza por <img> con la captura real */
 .shot__placeholder,
 .shot img {
-  aspect-ratio: 16 / 10;
+  aspect-ratio: 1272 / 676;
   width: 100%;
   border-radius: var(--radius);
 }
-.shot img { object-fit: cover; border: 1px solid var(--border); }
+.shot img {
+  height: auto;
+  object-fit: cover;
+  object-position: top left;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
 
 .shot__placeholder {
   display: grid;

@@ -12,6 +12,15 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=Rubik:wght@700;800;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="styles.css">
+
+  <!-- Aplica el tema guardado antes de pintar, para evitar un parpadeo claro→oscuro -->
+  <script>
+    try {
+      if (localStorage.getItem('mesquite-theme') === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      }
+    } catch (e) {}
+  </script>
 </head>
 <body>
 
@@ -24,6 +33,12 @@
         <span class="wordmark__mark" aria-hidden="true"></span>
         Mesquite <span class="wordmark__tv">TV</span>
       </a>
+
+      <!-- Botón de tema claro/oscuro -->
+      <button class="theme-toggle" type="button" aria-label="Activar modo oscuro" aria-pressed="false">
+        <svg class="theme-toggle__moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+        <svg class="theme-toggle__sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
 
       <button class="nav__toggle" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Abrir menú">
         <span></span><span></span><span></span>
@@ -229,32 +244,32 @@
 
     <!-- =========================================================
          5. GALERÍA
-         Para reemplazar un placeholder, cambia el <div class="shot__placeholder">
-         por: <img src="images/dashboard.png" alt="Dashboard principal de Mesquite TV">
+         Capturas reales en images/ (1272×676). Para agregar un espacio vacío usa:
+         <div class="shot__placeholder"><span>Espacio para imagen</span></div>
          ========================================================= -->
     <section class="section section--alt" id="galeria">
       <div class="container">
         <header class="section__head">
           <p class="eyebrow">Galería</p>
           <h2 class="section__title">Así se ve Mesquite TV</h2>
-          <p class="section__lead">Un panel claro para administrar, y un player que solo se dedica a reproducir.</p>
+          <p class="section__lead">Un panel sencillo para administrar, y un player que solo se dedica a reproducir.</p>
         </header>
 
         <div class="gallery">
           <figure class="shot">
-            <div class="shot__placeholder"><span>Espacio para imagen</span></div>
+            <img src="images/dashboard.png" alt="Dashboard principal de Mesquite TV con el resumen de pantallas y videowalls" width="1272" height="676" loading="lazy">
             <figcaption>Dashboard principal</figcaption>
           </figure>
           <figure class="shot">
-            <div class="shot__placeholder"><span>Espacio para imagen</span></div>
+            <img src="images/player.png" alt="Vista de la pantalla en reproducción desde el panel de Mesquite TV" width="1272" height="676" loading="lazy">
             <figcaption>Player en pantalla</figcaption>
           </figure>
           <figure class="shot">
-            <div class="shot__placeholder"><span>Espacio para imagen</span></div>
+            <img src="images/editor-playlist.png" alt="Editor de playlists de Mesquite TV con duración y orden de cada contenido" width="1272" height="676" loading="lazy">
             <figcaption>Editor de playlists</figcaption>
           </figure>
           <figure class="shot">
-            <div class="shot__placeholder"><span>Espacio para imagen</span></div>
+            <img src="images/detalle-dispositivo.png" alt="Detalle de un dispositivo en Mesquite TV con estado, almacenamiento y versión" width="1272" height="676" loading="lazy">
             <figcaption>Detalle del dispositivo</figcaption>
           </figure>
         </div>
