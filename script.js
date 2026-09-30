@@ -108,6 +108,23 @@
     }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
 
     revealItems.forEach(function (el) { observer.observe(el); });
+
+    // Si el usuario salta de golpe (tecla Fin, arrastrar la barra), los
+    // elementos que quedaron arriba sin cruzar la pantalla se muestran igual.
+    var ticking = false;
+    window.addEventListener('scroll', function () {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function () {
+        ticking = false;
+        document.querySelectorAll('.reveal:not(.is-visible)').forEach(function (el) {
+          if (el.getBoundingClientRect().bottom < 0) {
+            observer.unobserve(el);
+            finishReveal(el);
+          }
+        });
+      });
+    }, { passive: true });
   }
 
   /* ------------------------------------------------------------------------
