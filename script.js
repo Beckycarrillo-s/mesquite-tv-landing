@@ -65,105 +65,53 @@
   syncThemeButton();
 
   /* ------------------------------------------------------------------------
-     2. Hero: reloj en vivo del mockup
+     Animación de aparición al hacer scroll
+     Los elementos con .reveal aparecen al entrar en pantalla. Los que están
+     en un mismo grid (funciones, galería, estadísticas, hero) entran
+     escalonados. Al terminar se quita .reveal para no interferir con el hover.
      ------------------------------------------------------------------------ */
-  var clock = document.querySelector('[data-clock]');
-  function tick() {
-    var now = new Date();
-    clock.textContent =
-      String(now.getHours()).padStart(2, '0') + ':' +
-      String(now.getMinutes()).padStart(2, '0');
-  }
-  if (clock) {
-    tick();
-    setInterval(tick, 15000);
+  var revealItems = document.querySelectorAll('.reveal');
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function finishReveal(el) {
+    el.classList.remove('reveal', 'is-visible');
+    el.style.removeProperty('--reveal-delay');
   }
 
-  /* ------------------------------------------------------------------------
-     6. Formulario de contacto: validación en cliente + confirmación
-     ------------------------------------------------------------------------ */
-  var form = document.getElementById('contact-form');
-  var success = document.getElementById('form-success');
-  var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  function setError(input, message) {
-    var field = input.closest('.field');
-    var error = document.getElementById(input.id + '-error');
-    field.classList.toggle('has-error', Boolean(message));
-    input.setAttribute('aria-invalid', message ? 'true' : 'false');
-    if (message) {
-      input.setAttribute('aria-describedby', error.id);
-    } else {
-      input.removeAttribute('aria-describedby');
-    }
-    error.textContent = message || '';
-  }
-
-  function validate() {
-    var name = form.elements.nombre;
-    var email = form.elements.correo;
-    var firstInvalid = null;
-
-    if (!name.value.trim()) {
-      setError(name, 'Escribe tu nombre.');
-      firstInvalid = firstInvalid || name;
-    } else {
-      setError(name, '');
-    }
-
-    var emailValue = email.value.trim();
-    if (!emailValue) {
-      setError(email, 'Escribe tu correo.');
-      firstInvalid = firstInvalid || email;
-    } else if (!EMAIL_RE.test(emailValue)) {
-      setError(email, 'Revisa el formato del correo (ej. nombre@empresa.com).');
-      firstInvalid = firstInvalid || email;
-    } else {
-      setError(email, '');
-    }
-
-    if (firstInvalid) firstInvalid.focus();
-    return !firstInvalid;
-  }
-
-  // Limpia el error de un campo en cuanto el usuario lo corrige
-  ['nombre', 'correo'].forEach(function (key) {
-    form.elements[key].addEventListener('input', function () {
-      if (this.closest('.field').classList.contains('has-error')) validate();
+  if (reduceMotion || !('IntersectionObserver' in window)) {
+    // Sin animación: se muestra todo de inmediato
+    revealItems.forEach(finishReveal);
+  } else {
+    // Retraso escalonado según la posición dentro de su contenedor
+    var groups = document.querySelectorAll('.hero__copy, .stats__grid, .features, .gallery');
+    groups.forEach(function (group) {
+      var index = 0;
+      Array.prototype.forEach.call(group.children, function (child) {
+        if (!child.classList.contains('reveal')) return;
+        child.style.setProperty('--reveal-delay', Math.min(index, 6) * 90 + 'ms');
+        index++;
+      });
     });
-  });
 
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    if (!validate()) return;
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        observer.unobserve(el);
+        el.addEventListener('transitionend', function onEnd(e) {
+          if (e.target !== el) return;
+          el.removeEventListener('transitionend', onEnd);
+          finishReveal(el);
+        });
+        el.classList.add('is-visible');
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.12 });
 
-    var data = Object.fromEntries(new FormData(form));
-
-    // TODO: Conectar el envío real antes de publicar.
-    // Este sitio es estático y el formulario NO envía los datos a ningún lado.
-    // Opciones: un servicio como Formspree, un webhook propio, o un endpoint
-    // del backend de Mesquite TV que reenvíe por correo. Ejemplo:
-    //
-    //   fetch('https://formspree.io/f/XXXXXXX', {
-    //     method: 'POST',
-    //     headers: { 'Accept': 'application/json' },
-    //     body: new FormData(form)
-    //   }).then(function (res) { if (res.ok) showSuccess(); else ... });
-    //
-    // Mientras tanto solo se muestra la confirmación en pantalla.
-    void data;
-    showSuccess();
-  });
-
-  function showSuccess() {
-    form.reset();
-    form.hidden = true;
-    success.hidden = false;
-    success.focus();
+    revealItems.forEach(function (el) { observer.observe(el); });
   }
 
   /* ------------------------------------------------------------------------
-     7. Footer: año actual
+     6. Footer: año actual
      ------------------------------------------------------------------------ */
   var year = document.querySelector('[data-year]');
   if (year) year.textContent = new Date().getFullYear();
